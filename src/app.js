@@ -2,8 +2,12 @@ const express = require("express");
 
 const app = express();
 
-app.use((req,res)=>{
-    res.send("hiiss");
+app.use("/test",(req,res)=>{
+    res.send("hii this is test");
 })
 
-app.listen("3000");
+app.use("/hello",(req,res)=>{
+    res.send("hii this is hello");
+})
+
+app.listen("7777");
