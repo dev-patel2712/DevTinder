@@ -1,0 +1,2 @@
+- create a repository
+- initialise the repo
