@@ -1,24 +1,16 @@
 const express = require("express");
 
-const {userAuth, adminAuth} = require("./middlewares/auth");
 const app = express();
 
-app.use("/admin", adminAuth);
 
-app.post("/users/login",(req,res)=>{
-    res.send("User logged in");
-})
-app.get("/users/data", userAuth,(req,res)=>{
+app.get("/users/getAllData",(req,res)=>{
+    throw new Error("Some error occured");
     res.send("All users data");
 })
 
-app.get("/admin/getAllData", (req,res)=>{
-    res.send("Admin data");
-}
-)
+app.use('/',(err,req,res,next)=>{
+res.status(500).send("Something wnet wrong");
+});
 
-app.delete("/admin/deleteData", (req,res)=>{
-    res.send("Deleted admin data");
-})
 
 app.listen("7777");
