@@ -6,9 +6,9 @@ const User = require("./models/user")
 app.post('/signup', async(req,res)=>{
     
     const user = new User({
-        firstName:"Dev",
-        lastName:"Patel",
-        emailId:"dev@demo.com",
+        firstName:"Virat",
+        lastName:"Kohli",
+        emailId:"virat@kohli.com",
         password:"Test@123"
     })
     try{
