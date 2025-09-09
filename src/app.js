@@ -3,16 +3,13 @@ const connectDB = require("./config/database")
 const app = express();
 const User = require("./models/user")
 
+
+app.use(express.json());
 app.post('/signup', async(req,res)=>{
     
-    const user = new User({
-        firstName:"Virat",
-        lastName:"Kohli",
-        emailId:"virat@kohli.com",
-        password:"Test@123"
-    })
+    const user = new User(req.body)
     try{
-        user.save();
+        await user.save();
         res.send("User added successfully");
     }
     catch(error){
@@ -27,5 +24,5 @@ app.listen("7777",()=>{
     console.log("Server is succesfully listening on port 7777")
 });
 }).catch((err)=>{
-    console.error("DB not connected");
+    console.error("DB not connected",err);
 })
