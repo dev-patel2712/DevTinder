@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
-        minlength: 4,
         maxlength: 50
     },
     lastName: {
@@ -29,9 +29,8 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
         validate(value) {
-            let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!regex.test(value)) {
-                throw new Error("Email is invalid");
+            if (!validator.isEmail(value)) {
+                throw new Error("Invalid emailId" + " " + value);
             }
         }
     },
@@ -41,7 +40,12 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Password is not strong enough" + " "+value);
+            }
+        }
     },
     about: {
         type: String,
@@ -49,7 +53,12 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl: {
         type: String,
-        default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png"
+        default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png",
+        validate(value) {
+            if (!validator.isURL(value)) {
+                throw new Error("Invalid URL" + " " + value);            
+            }
+        }
     },
     skills: {
         type: [String]
