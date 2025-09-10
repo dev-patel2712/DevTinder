@@ -28,11 +28,6 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         unique: true,
         trim: true,
-        validate(value) {
-            if (!validator.isEmail(value)) {
-                throw new Error("Invalid emailId" + " " + value);
-            }
-        }
     },
     age: {
         type: Number,

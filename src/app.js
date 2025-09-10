@@ -2,23 +2,25 @@ const express = require("express");
 const connectDB = require("./config/database")
 const app = express();
 const User = require("./models/user")
-
+const { validateSignupData } = require("./utils/validation")
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
 //signup route to create a new user
 app.post('/signup', async (req, res) => {
 
-    const user = new User(req.body)
     try {
-        if (user?.skills.length > 10) {
-            throw new Error("You can add maximum 10 skills");
-        }
+        validateSignupData(req);
+        const {firstName, lastName, emailId, password} = req.body;
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        const user = new User({ firstName, lastName, emailId, password: passwordHash })
         await user.save();
         res.send("User added successfully");
     }
     catch (error) {
-        res.status(400).send("Error saving the user:" + error.message);
+        res.status(400).send("ERROR: " + error.message);
     }
 
 })
