@@ -109,6 +109,37 @@ app.delete('/user', async (req, res) => {
     }
 })
 
+
+//update user details by id
+app.patch('/user', async (req, res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after" });
+        console.log(user);
+        return res.send("User Updated successfully");
+    }
+    catch (error) {
+        res.status(400).send("Something went wrong !");
+    }
+})
+
+
+//update user details by emailId
+app.patch('/userByEmailId', async (req, res) => {
+    const userEmailId = req.body.emailId;
+    const data = req.body;
+    try {
+        const user = await User.findOneAndUpdate({emailId:userEmailId}, data, { returnDocument: "after" });
+        console.log(user);
+        return res.send("User Updated successfully");
+    }
+    catch (error) {
+        res.status(400).send("Something went wrong !");
+    }
+})
+
+
 connectDB().then(() => {
     console.log("DB connected successfully");
     app.listen("7777", () => {
