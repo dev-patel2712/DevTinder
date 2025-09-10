@@ -15,7 +15,7 @@ app.post('/signup', async (req, res) => {
         res.send("User added successfully");
     }
     catch (error) {
-        res.status(400).send("Error saving the user:", error.message);
+        res.status(400).send("Error saving the user:"+ error.message);
     }
 
 })
@@ -115,12 +115,12 @@ app.patch('/user', async (req, res) => {
     const userId = req.body.userId;
     const data = req.body;
     try {
-        const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after" });
+        const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after", runValidators: true});
         console.log(user);
         return res.send("User Updated successfully");
     }
     catch (error) {
-        res.status(400).send("Something went wrong !");
+        res.status(400).send("Something went wrong !" + error.message);
     }
 })
 
@@ -130,12 +130,12 @@ app.patch('/userByEmailId', async (req, res) => {
     const userEmailId = req.body.emailId;
     const data = req.body;
     try {
-        const user = await User.findOneAndUpdate({emailId:userEmailId}, data, { returnDocument: "after" });
+        const user = await User.findOneAndUpdate({emailId:userEmailId}, data, { returnDocument: "after" , runValidators: true});
         console.log(user);
         return res.send("User Updated successfully");
     }
     catch (error) {
-        res.status(400).send("Something went wrong !");
+        res.status(400).send("Something went wrong !" + error.message);
     }
 })
 
