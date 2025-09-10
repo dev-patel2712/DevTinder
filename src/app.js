@@ -11,11 +11,14 @@ app.post('/signup', async (req, res) => {
 
     const user = new User(req.body)
     try {
+        if (user?.skills.length > 10) {
+            throw new Error("You can add maximum 10 skills");
+        }
         await user.save();
         res.send("User added successfully");
     }
     catch (error) {
-        res.status(400).send("Error saving the user:"+ error.message);
+        res.status(400).send("Error saving the user:" + error.message);
     }
 
 })
@@ -62,21 +65,21 @@ app.get('/feed', async (req, res) => {
 
 //get only one user by emailId with findOne method (even if two users have same emailId it will return only one user)
 
-app.get('/user', async (req, res) => {
-    const userEmail = req.body.emailId;
-    try {
-        const user = await User.findOne({ emailId: userEmail });
-        if (!user) {
-            return res.status(404).send("No user found with this emailId");
-        }
-        else {
-            res.send(user);
-        }
-    }
-    catch (error) {
-        res.status(400).send("Something went wrong !");
-    }
-})
+// app.get('/user', async (req, res) => {
+//     const userEmail = req.body.emailId;
+//     try {
+//         const user = await User.findOne({ emailId: userEmail });
+//         if (!user) {
+//             return res.status(404).send("No user found with this emailId");
+//         }
+//         else {
+//             res.send(user);
+//         }
+//     }
+//     catch (error) {
+//         res.status(400).send("Something went wrong !");
+//     }
+// })
 
 
 //findbyId method to get user by _id
@@ -111,26 +114,19 @@ app.delete('/user', async (req, res) => {
 
 
 //update user details by id
-app.patch('/user', async (req, res) => {
-    const userId = req.body.userId;
+app.patch('/user/:userId', async (req, res) => {
+    const userId = req.params?.userId;
     const data = req.body;
     try {
-        const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after", runValidators: true});
-        console.log(user);
-        return res.send("User Updated successfully");
-    }
-    catch (error) {
-        res.status(400).send("Something went wrong !" + error.message);
-    }
-})
-
-
-//update user details by emailId
-app.patch('/userByEmailId', async (req, res) => {
-    const userEmailId = req.body.emailId;
-    const data = req.body;
-    try {
-        const user = await User.findOneAndUpdate({emailId:userEmailId}, data, { returnDocument: "after" , runValidators: true});
+        const allowedUpdates = ['skills', 'about', 'photoUrl', 'age', 'gender'];
+        const isAllowedUpdate = Object.keys(data).every((update) => allowedUpdates.includes(update));
+        if (!isAllowedUpdate) {
+            throw new Error("Update not allowed!");
+        }
+        if (data?.skills.length > 10) {
+            throw new Error("You can add maximum 10 skills");
+        }
+        const user = await User.findByIdAndUpdate(userId, data, { returnDocument: "after", runValidators: true });
         console.log(user);
         return res.send("User Updated successfully");
     }
