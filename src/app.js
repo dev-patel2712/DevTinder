@@ -79,6 +79,25 @@ app.get('/user', async(req,res)=>{
 })
 
 
+//findbyId method to get user by _id
+
+app.get('/userById', async(req,res)=>{
+    const id = req.body.id;
+       try{
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(404).send("No user found with this Id");
+        }
+        else{
+            res.send(user);
+        }
+    }
+    catch(error){
+        res.status(400).send("Something went wrong !");
+    }
+})
+
+
 connectDB().then(()=>{
 console.log("DB connected successfully");
 app.listen("7777",()=>{
