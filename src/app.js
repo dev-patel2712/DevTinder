@@ -39,14 +39,11 @@ app.post('/login', async (req, res) => {
         if (!user) {
             throw new Error("Invalid Credentials");
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password)
+        const isPasswordValid = await user.validateCorrectPasswordOrnot(password)
         if (isPasswordValid) {
-
-            //Create a jwt token 
-            const token = jwt.sign({ _id: user._id }, "DEV@Tinder$1234", { expiresIn: '7d' });
-
+            const token = await user.getJWT();
             //Add token in cookie and send cookie to user
-            res.cookie("token", token,{expires: new Date(Date.now() + 7*24*60*60*1000)})
+            res.cookie("token", token,{expires: new Date(Date.now() + 8*3600000)})
             res.send("Login Successful")
         }
         else {
@@ -74,6 +71,21 @@ app.get('/profile', userAuth, async (req, res) => {
     }
 
 })
+
+
+//Send connection request api
+app.post('/connectionRequest', userAuth, async (req, res) => {
+
+    try {
+        const user = req.user;
+        res.send(user.firstName+" sent the connection request");
+    }
+    catch (error) {
+        res.status(400).send("ERROR: " + error.message);
+    }
+
+})
+
 
 connectDB().then(() => {
     console.log("DB connected successfully");

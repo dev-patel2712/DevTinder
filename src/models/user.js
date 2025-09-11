@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -36,9 +39,9 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        validate(value){
-            if(!validator.isStrongPassword(value)){
-                throw new Error("Password is not strong enough" + " "+value);
+        validate(value) {
+            if (!validator.isStrongPassword(value)) {
+                throw new Error("Password is not strong enough" + " " + value);
             }
         }
     },
@@ -51,7 +54,7 @@ const userSchema = new mongoose.Schema({
         default: "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png",
         validate(value) {
             if (!validator.isURL(value)) {
-                throw new Error("Invalid URL" + " " + value);            
+                throw new Error("Invalid URL" + " " + value);
             }
         }
     },
@@ -63,5 +66,18 @@ const userSchema = new mongoose.Schema({
         timestamps: true
     })
 
+
+userSchema.methods.getJWT = async function () {
+    const user = this;
+    const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$1234", { expiresIn: '7d' });
+    return token;
+}
+
+userSchema.methods.validateCorrectPasswordOrnot = async function(passwordEnteredByUser){
+    const user = this;
+    const passwordHarsh = user.password;
+    const isPasswordValid = await bcrypt.compare(passwordEnteredByUser, passwordHarsh);
+    return isPasswordValid;
+}
 const User = mongoose.model("User", userSchema);
 module.exports = User;
