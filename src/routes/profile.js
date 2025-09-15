@@ -6,7 +6,7 @@ const profileRouter = express.Router();
 
 //Get Profile route to get user profile
 
-profileRouter.get('/profile', userAuth, async (req, res) => {
+profileRouter.get('/profile/view', userAuth, async (req, res) => {
 
     try {
 
