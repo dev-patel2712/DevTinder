@@ -46,7 +46,7 @@ requestRouter.post('/connectionRequest/:status/:toUserId', userAuth, async (req,
 
         await connectionRequest.save();
         res.json({
-            message:"Connection request sent successfully from"
+            message: status == "ignored" ? ("Hii, " + user.firstName + " You Ignored " + isUserPresent.firstName ) :("Hii, " + user.firstName + " You showed interest in " + isUserPresent.firstName )
         })
 
 
